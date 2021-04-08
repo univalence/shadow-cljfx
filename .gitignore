@@ -1,9 +1,12 @@
-
-/target
 /node_modules
 /yarn.lock
 /package-lock.json
 /*.log
 .shadow-cljs/
-
+*.iml
+.idea/
+.cpcache/
 .nrepl-port
+target/cljs-runtime
+target/main.js
+target/manifest.edn

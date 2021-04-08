@@ -1,6 +1,5 @@
 
-Browser demo for [shadow-cljs](https://github.com/thheller/shadow-cljs)
-----
+# cljfx + shadow-cljs minimal setup
 
 ### Develop
 
@@ -8,7 +7,6 @@ Run in development:
 
 ```bash
 yarn
-(mkdir -p target && cp assets/index.html target/)
 yarn shadow-cljs watch app
 ```
 
