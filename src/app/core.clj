@@ -1,6 +1,7 @@
 (ns app.core
     (:require [cljfx.api :as fx]
-              [cljfx.ext.web-view :as web-view]))
+              [cljfx.ext.web-view :as web-view]
+              [app.server]))
 
 (def web-view
   {:fx/type web-view/with-engine-props
@@ -23,9 +24,6 @@
   (fx/create-renderer
    :middleware (fx/wrap-map-desc #'root)))
 
-(def *state
-  (atom
-   {:title  nil
-    :status nil}))
-
-(fx/mount-renderer *state renderer)
+(renderer {:fx/type root
+           :title "shadow-cljfx"
+           :status "ok"})
