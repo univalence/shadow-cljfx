@@ -10,3 +10,5 @@
 target/cljs-runtime
 target/main.js
 target/manifest.edn
+target/*/
+.socket-repl-port
