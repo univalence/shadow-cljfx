@@ -1,18 +1,32 @@
 (ns article.ex-05.webview
+  (:refer-clojure :exclude [send])
   (:require
    [cljfx.api :as fx]
    [cljfx.prop :as prop]
    [cljfx.mutator :as mutator]
-   [cljfx.lifecycle :as lifecycle]
+   [cljfx.lifecycle :as lc]
+   [cljfx.component :as comp]
    [cljfx.coerce :as coerce])
   (:import (javafx.beans.value ChangeListener ObservableValue)
            (javafx.concurrent Worker$State)
            (javafx.scene.web WebView)))
 
-(def engines (atom {}))
+(defonce engines (atom {}))
 
 ;; based on cljfx.ext.web-view
 ;; I've removed props that I don't need and add/modify some others
+
+(defn wrap-instance [lifecycle f]
+  (reify lc/Lifecycle
+    (create [_ desc opts]
+      (let [this (lc/create lifecycle desc opts)]
+        (f (comp/instance this))
+        this))
+    ;; boilerplate
+    (advance [_ component desc opts]
+      (lc/advance lifecycle component desc opts))
+    (delete [_ component opts]
+      (lc/delete lifecycle component opts))))
 
 (def engine-ext
 
@@ -21,20 +35,20 @@
    {:html     (prop/make
                (mutator/setter
                 #(.loadContent (.getEngine ^WebView %1) %2 "text/html"))
-               lifecycle/scalar)
+               lc/scalar)
 
     :bridge   (prop/make
                (mutator/setter
                 (fn [this bridge]
                   (let [engine (.getEngine ^WebView this)
                         window (.executeScript engine "window")]
-                    (.setMember window "bridge" bridge))))
-               lifecycle/scalar)
+                    (.setMember window "app" bridge))))
+               lc/scalar)
 
     :on-error (prop/make
                (mutator/setter
                 #(.setOnError (.getEngine ^WebView %1) %2))
-               lifecycle/event-handler
+               lc/event-handler
                :coerce coerce/event-handler)
 
     :on-load  (prop/make
@@ -48,34 +62,37 @@
                                               ^Worker$State new-state]
                                       (if (= new-state Worker$State/SUCCEEDED)
                                         (f engine (.getDocument engine)))))))))
-               lifecycle/scalar)}))
+               lc/scalar)}))
 
 ;; IWebBridge instances are intended to bridge between web views and cljfx
 
-(defprotocol IWebBridge
-  (toJava [_ data]))
-
-(def bridge_log
-  (reify IWebBridge
-    (toJava [_ data] (println "receive " data " from client."))))
+(defprotocol ISend
+  (send [_ data]))
 
 (defn bridge [handler]
-  (reify IWebBridge
-    (toJava [_ data] (handler (read-string data)))))
+  (reify ISend
+    (send [_ data] (handler (read-string data)))))
 
-(defn webview [{:keys [id markup on-error on-load handler]
-                :or {bridge bridge_log
-                     on-error (fn [e] (println "error: " e))}}]
-  {:fx/type engine-ext
+(def bridge_log
+  (bridge (fn [message] (println "received: " message))))
+
+(defn web-view [{:keys [id html on-error on-load handler]
+                 :or   {on-error (fn [e] (println "error: " e))
+                        on-load  (fn [_ _] nil)}}]
+  {:fx/type (wrap-instance engine-ext
+                           (fn [instance]
+                             (swap! engines assoc id (.getEngine ^WebView instance))))
    :desc    {:fx/type :web-view}
-   :props   {:html     markup
-             :bridge   (if handler (bridge handler) bridge)
+   :props   {:html     html
+             :bridge   (if handler (bridge handler) bridge_log)
              :on-error on-error
-             :on-load  (fn [engine document]
-                         (swap! engines assoc id engine)
-                         (when on-load (on-load engine document)))}})
+             :on-load  on-load}})
 
 (defn send! [id data]
   (fx/on-fx-thread
    (.executeScript (get @engines id)
-                   (str "fromJava(\"" (pr-str data) "\")"))))
+                   (str "webView.send(" (pr-str data) ")"))))
+
+(comment
+ (get @engines :ex-05))
+#_(fx/on-fx-thread (.executeScript (get @engines :ex-05) "window"))
