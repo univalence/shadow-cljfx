@@ -1,7 +1,19 @@
-{:deps   true
- :nrepl  {:port 8777}
- :dev-http {8080 "target/"}
- :builds {:app {:output-dir "target/"
-                :asset-path "."
-                :target :browser
-                :modules {:main {:init-fn app.main/init}}}}}
+{:deps true,
+ :nrepl {:port 8777},
+ :dev-http {8080 "target/"},
+ :builds
+ {:c1
+  {:output-dir "target/c1",
+   :asset-path "..",
+   :target :browser,
+   :modules {:main {:init-fn app.c1/init}}},
+  :c2
+  {:output-dir "target/c2",
+   :asset-path "..",
+   :target :browser,
+   :modules {:main {:init-fn app.c2/init}}},
+  :components.one
+  {:output-dir "target/components/one",
+   :asset-path ".",
+   :target :browser,
+   :modules {:main {:init-fn components.one.core/main}}}}}

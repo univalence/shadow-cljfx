@@ -13,8 +13,6 @@
 ;; this is holding connections to web-views
 (def connections (atom {}))
 
-(def client-conn (atom nil))
-
 (def non-websocket-request
   {:status  400
    :headers {"content-type" "application/text"}
@@ -31,50 +29,36 @@
     (fn [_]
       non-websocket-request))))
 
+(defn make-handler [consume]
+  (fn [req]
+    (-> (d/let-flow [conn (http/websocket-connection req)]
+                    (if-not conn
+                      non-websocket-request
+                      (d/let-flow [id-str (s/take! conn)]
+                                  (let [id (read-string id-str)]
+                                    (swap! connections assoc id conn)
+                                    (s/consume (partial consume id) conn)))))
+        (d/catch
+         (fn [_]
+           non-websocket-request)))))
 
-
-(defn logging-handler
-  [req]
-  (-> (d/let-flow [conn (http/websocket-connection req)]
-                  (reset! client-conn conn)
-                  (s/consume
-                   #(println "server receives: " %)
-                   conn))
-      (d/catch
-       (fn [_]
-         non-websocket-request))))
-
-(defn logging-handler2
-  [req]
-  (-> (d/let-flow [conn (http/websocket-connection req)]
-                  (if-not conn
-                    non-websocket-request
-                    (d/let-flow [id-str (s/take! conn)]
-                                (let [id (read-string id-str)]
-                                  (swap! connections assoc id conn)
-                                  (s/consume
-                                   #(println id "sent: " %)
-                                   conn)))))
-      (d/catch
-       (fn [_]
-         non-websocket-request))))
+(def logging-handler
+  (make-handler #(println %1 "sent: " %2)))
 
 
 (def handler
   (params/wrap-params
    (compojure/routes
     (GET "/echo" [] echo-handler)
-    (GET "/talk" [] logging-handler2)
+    (GET "/talk" [] logging-handler)
     (route/not-found "No such page."))))
 
 (def ws-server
   (http/start-server handler {:port 3000}))
 
-(defn send!_old [message]
-  (s/put! @client-conn message))
-
 (defn send! [id message]
-  (s/put! (get @connections id) message))
+  (when-let [conn (get @connections id)]
+    (s/put! conn message)))
 
 
 (comment
