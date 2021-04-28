@@ -37,6 +37,7 @@ Tout d'abord voyons à quoi peut ressembler une application cljfx minimale.
 ```
 
 ![img](images/Capture%20d’écran%202021-04-13%20à%2010.50.00.png)
+
 Pour plus de détails, je vous invite à regarder directement le [repo github de cljfx](https://github.com/cljfx/cljfx). Ce dernier regorge d'exemples permettant de rapidement ce faire une idée de ce qu'il est possible d'en tirer, et ce même sans expérience antérieure avec javaFX.
 
 Pour l'heure nous allons essayer d'afficher une simple vue web:
