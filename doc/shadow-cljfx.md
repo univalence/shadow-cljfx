@@ -36,7 +36,7 @@ Tout d'abord voyons à quoi peut ressembler une application cljfx minimale.
 
 ```
 
-![[https://github.com/univalence/shadow-cljfx/blob/master/doc/images/Capture d’écran 2021-04-13 à 10.50.00.png]]
+![[https://github.com/univalence/shadow-cljfx/blob/master/doc/images/Capture%20d’écran%202021-04-13%20à%2010.50.00.png]]
 Pour plus de détails, je vous invite à regarder directement le [repo github de cljfx](https://github.com/cljfx/cljfx). Ce dernier regorge d'exemples permettant de rapidement ce faire une idée de ce qu'il est possible d'en tirer, et ce même sans expérience antérieure avec javaFX.
 
 Pour l'heure nous allons essayer d'afficher une simple vue web:
@@ -60,7 +60,7 @@ Pour l'heure nous allons essayer d'afficher une simple vue web:
                   :props   {:content html-content}}}}))
 ```
 
-![[https://github.com/univalence/shadow-cljfx/blob/master/doc/images/Capture d’écran 2021-04-13 à 10.49.23.png]]
+![[https://github.com/univalence/shadow-cljfx/blob/master/doc/images/Capture%20d’écran%202021-04-13%20à%2010.49.23.png]]
 
 ## clojurescript
 
@@ -123,7 +123,7 @@ Ensuite, utilisons shadow-cljs pour compiler notre composant et enveloppons le j
                        :props   {:content MARKUP}}}}))
 ```
 
-![[https://github.com/univalence/shadow-cljfx/blob/master/doc/images/Capture d’écran 2021-04-20 à 12.44.15.png]]
+![[https://github.com/univalence/shadow-cljfx/blob/master/doc/images/Capture%20d’écran%202021-04-20%20à%2012.44.15.png]]
 
 ## Hot reloading ?
 
@@ -279,7 +279,7 @@ Cette extension pourra être utilisée ainsi:
                                  :handler  (fn [data] (println "Client sent: " data))}}}}))
 ```
 
-![[https://github.com/univalence/shadow-cljfx/blob/master/doc/images/Capture d’écran 2021-04-21 à 13.24.27.png]]
+![[https://github.com/univalence/shadow-cljfx/blob/master/doc/images/Capture%20d’écran%202021-04-21%20à%2013.24.27.png]]
 
 Lorsque l'on clique sur le bouton "anyone here ?" le message `Client sent: anyone here ?` est affiché coté application.
 
