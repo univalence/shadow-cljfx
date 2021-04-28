@@ -1,7 +1,7 @@
-(ns app.core
+(ns chaussette.core
   (:require [cljfx.api :as fx]
             [cljfx.ext.web-view :as web-view]
-            [app.server]))
+            [chaussette.server]))
 
 (def web-view
   {:fx/type web-view/with-engine-props

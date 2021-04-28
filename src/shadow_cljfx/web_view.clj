@@ -1,4 +1,4 @@
-(ns article.ex-05.webview
+(ns shadow-cljfx.web-view
   (:refer-clojure :exclude [send])
   (:require
    [cljfx.api :as fx]
@@ -13,7 +13,11 @@
 
 (defonce engines (atom {}))
 
-(defn wrap-instance [lifecycle f]
+(defn wrap-instance
+  "takes a lifecycle instance (which will not be modified) and a function that will
+   be called on the Component's instance during the execution of the create method.
+   It can be used to capture a reference towards the underlying component of a lifecycle."
+  [lifecycle f]
   (reify lc/Lifecycle
     (create [_ desc opts]
       (let [this (lc/create lifecycle desc opts)]
@@ -34,7 +38,12 @@
 
    {:html     (prop/make
                (mutator/setter
-                #(.loadContent (.getEngine ^WebView %1) %2 "text/html"))
+                #(when %2 (.loadContent (.getEngine ^WebView %1) %2 "text/html")))
+               lc/scalar)
+
+    :url      (prop/make
+               (mutator/setter
+                #(when %2 (.load (.getEngine ^WebView %1) %2)))
                lc/scalar)
 
     :bridge   (prop/make
@@ -57,8 +66,8 @@
                   (let [engine (.getEngine ^WebView this)]
                     (.addListener (.stateProperty (.getLoadWorker engine))
                                   (proxy [ChangeListener] []
-                                    (changed [^ObservableValue ov
-                                              ^Worker$State old-state
+                                    (changed [^ObservableValue _ov
+                                              ^Worker$State _old-state
                                               ^Worker$State new-state]
                                       (if (= new-state Worker$State/SUCCEEDED)
                                         (f engine (.getDocument engine)))))))))
@@ -71,15 +80,17 @@
   (reify ISend
     (send [_ data] (handler (read-string data)))))
 
-(defn web-view [{:keys [id html on-error on-load handler]
-                 :or   {on-error (fn [e] (println "error: " e))
-                        on-load  (fn [_ _] nil)
-                        handler (fn [message] (println "received: " message))}}]
+(defn web-view
+  [{:keys [id url html on-error on-load handler]
+    :or   {on-error (fn [e] (println "error: " e))
+           on-load  (fn [_ _] nil)
+           handler  (fn [message] (println "received: " message))}}]
   {:fx/type (wrap-instance engine-ext
                            (fn [instance]
                              (swap! engines assoc id (.getEngine ^WebView instance))))
    :desc    {:fx/type :web-view}
    :props   {:html     html
+             :url      url
              :bridge   (bridge handler)
              :on-error on-error
              :on-load  on-load}})
@@ -89,6 +100,4 @@
    (.executeScript (get @engines id)
                    (str "webView.send(" (pr-str data) ")"))))
 
-(comment
- (get @engines :ex-05))
-#_(fx/on-fx-thread (.executeScript (get @engines :ex-05) "window"))
+

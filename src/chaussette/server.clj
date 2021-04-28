@@ -1,4 +1,4 @@
-(ns app.server
+(ns chaussette.server
   (:require
    [compojure.core :as compojure :refer [GET]]
    [ring.middleware.params :as params]

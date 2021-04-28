@@ -146,7 +146,7 @@
       (init-websocket! id (fn [message] (println "ws receives: " message)))
       (render))]))
 
-(mapv zprint (core-src_ws 'foo.bar 3000))
+#_(mapv zprint (core-src_ws 'foo.bar 3000))
 
 (defn pretty-file-str [exprs]
   (apply str (interpose "\n\n" (map zp/zprint-str exprs))))
@@ -156,11 +156,11 @@
     (throw (Exception. (str "the file " path " already exists")))
     (spit path str)))
 
-(spit "scripts/test.cljs"
+#_(spit "scripts/test.cljs"
       (pretty-file-str (core-src_ws 'foo.bar 3000)))
 
 #_(zp/zprint-file-str)
 
-(zp/czprint-fn clojure.core/get)
+#_(zp/czprint-fn clojure.core/get)
 
 (defn cljp [])

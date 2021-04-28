@@ -1,0 +1,5 @@
+{:builds {:one {:modules {:main {:init-fn component/init}},
+                :output-dir "target/",
+                :target :browser}},
+ :dev-http {8080 "target/"},
+ :nrepl {:port 8777}}

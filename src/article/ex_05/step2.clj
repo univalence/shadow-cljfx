@@ -3,7 +3,8 @@
    [cljfx.api :as fx]
    [cljfx.prop :as prop]
    [cljfx.mutator :as mutator]
-   [cljfx.lifecycle :as lifecycle])
+   [cljfx.component :as comp]
+   [cljfx.lifecycle :as lc])
   (:import (javafx.scene.web WebView)))
 
 (defprotocol ISend
@@ -15,6 +16,18 @@
   (reify ISend
     (send [_ message] (f message))))
 
+(defn wrap-instance [lifecycle f]
+  (reify lc/Lifecycle
+    (create [_ desc opts]
+      (let [this (lc/create lifecycle desc opts)]
+        (f (comp/instance this))
+        this))
+    ;; boilerplate
+    (advance [_ component desc opts]
+      (lc/advance lifecycle component desc opts))
+    (delete [_ component opts]
+      (lc/delete lifecycle component opts))))
+
 (def engine-ext
 
   (fx/make-ext-with-props
@@ -22,7 +35,7 @@
    {:html    (prop/make
               (mutator/setter
                #(.loadContent (.getEngine ^WebView %1) %2 "text/html"))
-              lifecycle/scalar)
+              lc/scalar)
 
     :handler (prop/make
               (mutator/setter
@@ -30,13 +43,7 @@
                  (let [engine (.getEngine ^WebView this)
                        window (.executeScript engine "window")]
                    (.setMember window "app" (sender f)))))
-              lifecycle/scalar)
-
-    :with-engine (prop/make
-                  (mutator/setter
-                   (fn [this f] (f (.getEngine ^WebView this))))
-                  lifecycle/scalar)
-
+              lc/scalar)
     }))
 
 (def html-content
@@ -53,7 +60,7 @@
     </body>
    </html>")
 
-(def engine (atom {}))
+(def engine (atom nil))
 
 (fx/on-fx-thread
  (fx/create-component
@@ -61,11 +68,10 @@
    :showing true
    :y       -1000 :x 1000
    :scene   {:fx/type :scene
-             :root    {:fx/type engine-ext
+             :root    {:fx/type (wrap-instance engine-ext #(reset! engine (.getEngine %)))
                        :desc    {:fx/type :web-view}
                        :props   {:html        html-content
-                                 :handler     (fn [data] (println "Client sent: " data))
-                                 :with-engine #(reset! engine %)}}}}))
+                                 :handler     (fn [data] (println "Client sent: " data))}}}}))
 
 (defn send! [message]
   (fx/on-fx-thread
@@ -73,5 +79,4 @@
 
 
 (comment
- (deref engine)
  (send! "Bonjour"))

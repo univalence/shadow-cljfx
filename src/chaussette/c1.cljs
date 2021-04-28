@@ -1,4 +1,4 @@
-(ns app.c1
+(ns chaussette.c1
   (:require [reagent.core :as r]
             [reagent.dom :as rd]
             [cljs.core.async :as a :refer [<! >!]]
