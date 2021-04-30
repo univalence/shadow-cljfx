@@ -1,14 +1,18 @@
-{:paths   ["src" "scripts"],
+{:paths   ["src" "scripts" "resources"],
  :deps
           {org.clojure/clojure           {:mvn/version "1.10.0"},
-           cljfx/cljfx                   {:mvn/version "1.7.13"},
-           haslett/haslett               {:mvn/version "0.1.6"},
-           compojure/compojure           {:mvn/version "1.6.2"},
-           cljfx/css                     {:mvn/version "1.1.0"},
-           thheller/shadow-cljs          {:mvn/version "2.11.18"},
            org.clojure/clojurescript     {:mvn/version "1.10.764"},
-           clj-http/clj-http             {:mvn/version "3.10.3"},
+           thheller/shadow-cljs          {:mvn/version "2.11.18"},
+
+           cljfx/cljfx                   {:mvn/version "1.7.13"},
+           cljfx/css                     {:mvn/version "1.1.0"},
+
            aleph/aleph                   {:mvn/version "0.4.6"},
+           compojure/compojure           {:mvn/version "1.6.2"},
+           clj-http/clj-http             {:mvn/version "3.10.3"},
+
+           haslett/haslett               {:mvn/version "0.1.6"},
+
            zprint/zprint                 {:mvn/version "1.1.1"},
            hiccup/hiccup                 {:mvn/version "1.0.5"},
            org.clojure/tools.deps.alpha  {:mvn/version "0.11.910"},
@@ -18,8 +22,10 @@
            org.clojure/data.priority-map {:mvn/version "1.0.0"}
            com.gfredericks/user.clj      {:mvn/version "0.1.0"}
 
-           ;cider/cider-nrepl             {:mvn/version "0.22.4"}
-           org.clojure/tools.nrepl       {:mvn/version "0.2.13"}},
+           ;; bidi/bidi                     {:mvn/version "2.1.6"}
+           ;; cider/cider-nrepl             {:mvn/version "0.22.4"}
+           ;; org.clojure/tools.nrepl       {:mvn/version "0.2.13"}
+           },
 
  :aliases {}}
 

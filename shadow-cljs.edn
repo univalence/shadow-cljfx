@@ -1,7 +1,7 @@
-{:builds {:c1 {:asset-path "..",
-               :modules {:main {:init-fn app.c1/init}},
-               :output-dir "target/c1",
-               :target :browser}},
- :deps true,
+{:builds   {:view1 {:asset-path ".",
+                    :modules    {:main {:init-fn chaussette.view1/init}},
+                    :output-dir "resources/public/view1",
+                    :target     :browser}},
+ :deps     true,
  :dev-http {8080 "target/"},
- :nrepl {:port 8777}}
+ :nrepl    {:port 8777}}

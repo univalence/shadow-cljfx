@@ -12,10 +12,9 @@
 
 (defn ^:export init []
 
-  (set! js/window.webView (js-obj))
-
-  (set! js/window.webView.send
-        (fn [data] (swap! state assoc :message data)))
+  (set! js/window.webView
+        (js-obj "send"
+                (fn [data] (swap! state assoc :message data))))
 
   (rd/render [root]
              (.getElementById js/document "app")))
