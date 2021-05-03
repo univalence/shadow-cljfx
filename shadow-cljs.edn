@@ -3,5 +3,5 @@
                     :output-dir "resources/public/view1",
                     :target     :browser}},
  :deps     true,
- :dev-http {8080 "target/"},
+ :dev-http {8080 "resources/public/"},
  :nrepl    {:port 8777}}

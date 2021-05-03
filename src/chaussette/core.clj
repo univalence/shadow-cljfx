@@ -6,23 +6,13 @@
 
 (def VIEW_URL "http://localhost:3000/view1/index.html")
 
-(def web-view
-  {:fx/type web-view/with-engine-props
-   :props   {:url VIEW_URL}
-   :desc    {:fx/type :web-view}})
-
-
-(defn root [{:keys [title status]}]
+(defn root [_]
       {:fx/type :stage
-       :x       1000 :y -1000
        :showing true
-       :title   (str title)
        :scene   {:fx/type :scene
-                 :root
-                          {:fx/type  :v-box
-                           :children [web-view
-                                      {:fx/type :label
-                                       :text    (str status)}]}}})
+                 :root {:fx/type web-view/with-engine-props
+                        :props   {:url VIEW_URL}
+                        :desc    {:fx/type :web-view}}}})
 
 
 (def renderer
@@ -36,12 +26,12 @@
 
 (comment
 
- (server/stop! server)
- (renderer {:fx/type root
-            :title "shadow-cljfx"
-            :status "ok"})
+ (renderer)
 
- (server/send! :chaussette.view1 "Coucou")
+ (server/send! :chaussette.view1
+               (rand-nth [:ping :pong]))
+
+ (server/stop! server)
 
  (require '[shadow.cljs.devtools.api :as shad])
- (shad/release :c1))
+ (shad/release :view1))

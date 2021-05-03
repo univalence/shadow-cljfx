@@ -11,12 +11,13 @@
            compojure/compojure           {:mvn/version "1.6.2"},
            clj-http/clj-http             {:mvn/version "3.10.3"},
 
+           reagent/reagent               {:mvn/version "1.0.0-alpha2"},
            haslett/haslett               {:mvn/version "0.1.6"},
 
            zprint/zprint                 {:mvn/version "1.1.1"},
            hiccup/hiccup                 {:mvn/version "1.0.5"},
            org.clojure/tools.deps.alpha  {:mvn/version "0.11.910"},
-           reagent/reagent               {:mvn/version "1.0.0-alpha2"},
+
            backtick/backtick             {:mvn/version "0.3.4"},
            me.raynes/fs                  {:mvn/version "1.4.6"},
            org.clojure/data.priority-map {:mvn/version "1.0.0"}

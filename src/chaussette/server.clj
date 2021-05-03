@@ -1,11 +1,10 @@
 (ns chaussette.server
   (:require
-   [compojure.core :as compojure :refer [GET]]
-   [ring.middleware.params :as params]
-   [compojure.route :as route]
    [aleph.http :as http]
    [manifold.stream :as s]
-   [manifold.deferred :as d]))
+   [manifold.deferred :as d]
+   [compojure.core :as compojure :refer [GET]]
+   [compojure.route :as route]))
 
 
 ;; this is holding connections to web-views
@@ -33,11 +32,10 @@
 
 
 (def handler
-  (params/wrap-params
-   (compojure/routes
-    (GET "/ws" [] logging-handler)
-    (route/resources "/")
-    (route/not-found "No such page."))))
+  (compojure/routes
+   (GET "/ws" [] logging-handler)
+   (route/resources "/")
+   (route/not-found "No such page.")))
 
 
 (defn start! [port]
@@ -53,15 +51,5 @@
     (s/put! conn (pr-str message))))
 
 
-
-(comment
-
- (handler {:uri "/index.html" :request-method :get})
- (def S (start!))
- (close! S)
- (get @connections :chaussette.view1)
- (send! :shadow.cljfx/test-one "hi from server")
-
- )
 
 
